@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zebra Agent — Setup Wizard Mockup</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0d0d1a;
+      color: #e0e0e0;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+    .mockup-label {
+      text-align: center;
+      font-size: 11px;
+      color: #888;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .window {
+      width: 520px;
+      background: #1a1a2e;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      border: 1px solid #2a2a4a;
+    }
+    .titlebar {
+      background: #12122a;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid #2a2a4a;
+    }
+    .titlebar .dots {
+      display: flex;
+      gap: 6px;
+    }
+    .titlebar .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+    .titlebar .dot.red { background: #ff5f57; }
+    .titlebar .dot.yellow { background: #febc2e; }
+    .titlebar .dot.green { background: #28c840; }
+    .titlebar .title {
+      flex: 1;
+      text-align: center;
+      font-size: 12px;
+      color: #888;
+    }
+    .content {
+      padding: 24px;
+    }
+    .header {
+      text-align: center;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #2a2a4a;
+      margin-bottom: 20px;
+    }
+    .header h1 {
+      font-size: 20px;
+      font-weight: 600;
+      color: #f5a623;
+    }
+    .header .subtitle {
+      font-size: 12px;
+      color: #888;
+      margin-top: 4px;
+    }
+    .step-indicator {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+    .step-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #2a2a4a;
+    }
+    .step-dot.active { background: #f5a623; }
+    .step-dot.done { background: #4caf50; }
+    .card {
+      background: #16213e;
+      border-radius: 10px;
+      padding: 20px;
+    }
+    .card-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #f5a623;
+      margin-bottom: 16px;
+    }
+    .form-group {
+      margin-bottom: 14px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      color: #aaa;
+      margin-bottom: 5px;
+    }
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 10px 12px;
+      background: #0f3460;
+      border: 1px solid #2a2a4a;
+      border-radius: 8px;
+      color: #e0e0e0;
+      font-size: 13px;
+      outline: none;
+    }
+    .form-group input:focus {
+      border-color: #f5a623;
+    }
+    .form-group input::placeholder {
+      color: #555;
+    }
+    .result-box {
+      font-size: 12px;
+      padding: 6px 0;
+      min-height: 20px;
+    }
+    .result-box.success { color: #4caf50; }
+    .result-box.error { color: #ef5350; }
+    .result-box.pending { color: #888; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .btn-primary {
+      background: #f5a623;
+      color: #1a1a2e;
+    }
+    .btn-primary:disabled {
+      background: #444;
+      color: #777;
+    }
+    .btn-secondary {
+      background: #2a2a4a;
+      color: #e0e0e0;
+    }
+    .btn-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+    }
+    .btn-block {
+      width: 100%;
+    }
+    .printer-list {
+      list-style: none;
+      max-height: 100px;
+      overflow-y: auto;
+      background: #0a0a1a;
+      border-radius: 6px;
+      margin-top: 8px;
+    }
+    .printer-list li {
+      padding: 8px 12px;
+      font-family: monospace;
+      font-size: 13px;
+      border-bottom: 1px solid #1a1a2e;
+    }
+    .printer-list li.selected {
+      background: #f5a623;
+      color: #1a1a2e;
+    }
+    .printer-list li:last-child { border-bottom: none; }
+    .divider { height: 40px; }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- STEP 1: 서버 연결 -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<div>
+  <div class="mockup-label">Step 1 — Conexión al servidor</div>
+  <div class="window">
+    <div class="titlebar">
+      <div class="dots">
+        <div class="dot red"></div>
+        <div class="dot yellow"></div>
+        <div class="dot green"></div>
+      </div>
+      <div class="title">VentaGO Zebra Agent — Configuración inicial</div>
+    </div>
+    <div class="content">
+      <div class="header">
+        <h1>VentaGO Zebra Agent</h1>
+        <div class="subtitle">Configuración inicial</div>
+      </div>
+
+      <div class="step-indicator">
+        <div class="step-dot active"></div>
+        <div class="step-dot"></div>
+        <div class="step-dot"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Paso 1 — Conexión al servidor</div>
+        <div class="form-group">
+          <label>URL del servidor</label>
+          <input type="text" value="https://newapi.coolsistema.com/api">
+        </div>
+        <div class="form-group">
+          <label>API Key (del panel de administración)</label>
+          <input type="text" value="vg_pr_8a3f2b1c9e4d5678abcdef01">
+        </div>
+        <div class="result-box success">&#10003; Conexión exitosa</div>
+        <div class="btn-row">
+          <button class="btn btn-secondary">Probar conexión</button>
+          <button class="btn btn-primary">Siguiente &rarr;</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- STEP 2: 프린터 설정 -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<div>
+  <div class="mockup-label">Step 2 — Impresora Zebra</div>
+  <div class="window">
+    <div class="titlebar">
+      <div class="dots">
+        <div class="dot red"></div>
+        <div class="dot yellow"></div>
+        <div class="dot green"></div>
+      </div>
+      <div class="title">VentaGO Zebra Agent — Configuración inicial</div>
+    </div>
+    <div class="content">
+      <div class="header">
+        <h1>VentaGO Zebra Agent</h1>
+        <div class="subtitle">Configuración inicial</div>
+      </div>
+
+      <div class="step-indicator">
+        <div class="step-dot done"></div>
+        <div class="step-dot active"></div>
+        <div class="step-dot"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Paso 2 — Impresora Zebra</div>
+        <div class="form-group">
+          <label>IP de la impresora</label>
+          <input type="text" value="192.168.1.45">
+        </div>
+        <div class="form-group">
+          <label>Puerto</label>
+          <input type="number" value="9100">
+        </div>
+        <button class="btn btn-secondary btn-block" style="margin-bottom:10px;">
+          Buscar impresoras en la red
+        </button>
+        <div class="result-box pending">Escaneando: 187/254 (2 encontradas)</div>
+        <ul class="printer-list">
+          <li class="selected">192.168.1.45</li>
+          <li>192.168.1.102</li>
+        </ul>
+        <div class="result-box success" style="margin-top:8px;">&#10003; Impresora accesible</div>
+        <div class="btn-row">
+          <button class="btn btn-secondary">&larr; Atrás</button>
+          <button class="btn btn-secondary">Probar impresora</button>
+          <button class="btn btn-primary">Siguiente &rarr;</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- STEP 3: 라벨 설정 -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<div>
+  <div class="mockup-label">Step 3 — Etiqueta</div>
+  <div class="window">
+    <div class="titlebar">
+      <div class="dots">
+        <div class="dot red"></div>
+        <div class="dot yellow"></div>
+        <div class="dot green"></div>
+      </div>
+      <div class="title">VentaGO Zebra Agent — Configuración inicial</div>
+    </div>
+    <div class="content">
+      <div class="header">
+        <h1>VentaGO Zebra Agent</h1>
+        <div class="subtitle">Configuración inicial</div>
+      </div>
+
+      <div class="step-indicator">
+        <div class="step-dot done"></div>
+        <div class="step-dot done"></div>
+        <div class="step-dot active"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Paso 3 — Etiqueta</div>
+
+        <!-- 라벨 미리보기 -->
+        <div style="background:#fff; border-radius:6px; padding:12px; margin-bottom:16px; color:#000; font-family:monospace; position:relative;">
+          <div style="border:2px dashed #ccc; padding:10px; border-radius:4px;">
+            <div style="font-size:13px; font-weight:bold;">Coca Cola 500ml</div>
+            <div style="font-size:11px; color:#555; margin-top:2px;">$1.500,00</div>
+            <div style="margin-top:6px; font-family:monospace; letter-spacing:3px; font-size:16px;">|||||||||||||||||||</div>
+            <div style="font-size:9px; color:#888; margin-top:2px;">7790895000107</div>
+            <div style="font-size:9px; color:#aaa; margin-top:6px;">VENTAGO TEST</div>
+          </div>
+          <div style="position:absolute; top:6px; right:10px; font-size:9px; color:#bbb;">50mm x 30mm</div>
+        </div>
+
+        <div class="form-group">
+          <label>Ancho (dots, 203dpi: 50mm = 400)</label>
+          <input type="number" value="400">
+        </div>
+        <div class="form-group">
+          <label>Alto (dots, 203dpi: 30mm = 236)</label>
+          <input type="number" value="236">
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-secondary">&larr; Atrás</button>
+          <button class="btn btn-primary">Finalizar configuración</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,67 @@
+{
+  "name": "ventago-zebra-agent",
+  "version": "1.0.0",
+  "description": "VentaGO — Agente de Impresión Zebra (Código de Barras)",
+  "main": "main.js",
+  "author": "CoolSistema",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "build:win": "electron-builder --win --x64 --publish never",
+    "build:mac": "electron-builder --mac --x64 --arm64 --publish never",
+    "rebuild": "electron-builder install-app-deps"
+  },
+  "dependencies": {
+    "socket.io-client": "^4.8.1",
+    "electron-store": "^8.1.0"
+  },
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.0.0"
+  },
+  "build": {
+    "appId": "com.coolsistema.ventago-zebra",
+    "productName": "VentaGO Zebra Agent",
+    "copyright": "© 2026 CoolSistema",
+    "electronVersion": "28.3.3",
+    "icon": "renderer/assets/icon-512.png",
+    "publish": null,
+    "files": [
+      "main.js",
+      "preload.js",
+      "renderer/**",
+      "src/**",
+      "package.json"
+    ],
+    "asar": true,
+    "directories": {
+      "output": "build"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        }
+      ],
+      "artifactName": "VentaGO-Zebra-Agent-Setup.${ext}"
+    },
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": ["x64", "arm64"]
+        }
+      ],
+      "artifactName": "VentaGO-Zebra-Agent-${arch}.${ext}",
+      "category": "public.app-category.business"
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "runAfterFinish": true,
+      "createDesktopShortcut": true,
+      "allowToChangeInstallationDirectory": false
+    }
+  }
+}

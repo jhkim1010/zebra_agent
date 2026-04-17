@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VentaGO Zebra Agent — Setup</title>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>VentaGO Zebra Agent</h1>
+    <div class="subtitle">Configuración inicial</div>
+  </div>
+
+  <div class="step-indicator">
+    <div class="step-dot active" id="dot-1"></div>
+    <div class="step-dot" id="dot-2"></div>
+    <div class="step-dot" id="dot-3"></div>
+  </div>
+
+  <!-- Step 1: API Key 입력 (서버 URL 고정) -->
+  <div class="wizard-step active" id="step-1">
+    <div class="card">
+      <div class="card-title">Paso 1 — Verificar API Key</div>
+      <div class="form-group">
+        <label>API Key (del panel de administración)</label>
+        <input type="text" id="apiKey" placeholder="vg_pr_...">
+      </div>
+      <div id="ws-test-result" style="font-size:12px; margin-bottom:8px;"></div>
+      <div id="agent-info-box" style="display:none; background:#0f3460; border-radius:6px; padding:10px; margin-bottom:10px; font-size:13px;">
+        <div style="margin-bottom:4px;"><span style="color:#888;">Tienda:</span> <span id="info-store" style="color:#4caf50; font-weight:600;"></span></div>
+        <div><span style="color:#888;">Sucursal:</span> <span id="info-branch" style="color:#4caf50; font-weight:600;"></span></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-secondary" id="btn-test-ws">Verificar</button>
+        <button class="btn btn-primary" id="btn-next-1" disabled>Siguiente →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 2: 프린터 설정 -->
+  <div class="wizard-step" id="step-2">
+    <div class="card">
+      <div class="card-title">Paso 2 — Impresora Zebra</div>
+      <div class="form-group">
+        <label>IP de la impresora</label>
+        <input type="text" id="printerHost" placeholder="192.168.1.100">
+      </div>
+      <div class="form-group">
+        <label>Puerto</label>
+        <input type="number" id="printerPort" value="9100">
+      </div>
+      <button class="btn btn-secondary btn-block" id="btn-discover" style="margin-bottom:10px;">
+        Buscar impresoras en la red
+      </button>
+      <div id="discover-status" style="font-size:12px; margin-bottom:8px;"></div>
+      <ul class="printer-list" id="printer-list"></ul>
+      <div id="printer-test-result" style="font-size:12px; margin-top:8px;"></div>
+      <div class="btn-row">
+        <button class="btn btn-secondary" id="btn-back-2">← Atrás</button>
+        <button class="btn btn-secondary" id="btn-test-printer">Probar impresora</button>
+        <button class="btn btn-primary" id="btn-next-2">Siguiente →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 3: 라벨 설정 + 완료 -->
+  <div class="wizard-step" id="step-3">
+    <div class="card">
+      <div class="card-title">Paso 3 — Etiqueta</div>
+      <div class="form-group">
+        <label>Ancho (dots, 203dpi: 50mm = 400)</label>
+        <input type="number" id="labelWidth" value="400">
+      </div>
+      <div class="form-group">
+        <label>Alto (dots, 203dpi: 30mm = 236)</label>
+        <input type="number" id="labelHeight" value="236">
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-secondary" id="btn-back-3">← Atrás</button>
+        <button class="btn btn-primary" id="btn-finish">Finalizar configuración</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const $ = (sel) => document.querySelector(sel);
+  const api = window.electronAPI;
+
+  // 안전한 상태 메시지 표시 (textContent 사용)
+  function showResult(el, text, success) {
+    el.textContent = text;
+    el.style.color = success ? '#4caf50' : '#ef5350';
+  }
+
+  function goStep(n) {
+    document.querySelectorAll('.wizard-step').forEach(el => el.classList.remove('active'));
+    $(`#step-${n}`).classList.add('active');
+    for (let i = 1; i <= 3; i++) {
+      const dot = $(`#dot-${i}`);
+      dot.className = 'step-dot';
+      if (i < n) dot.classList.add('done');
+      if (i === n) dot.classList.add('active');
+    }
+  }
+
+  // Step 1: API Key 검증 (서버 URL 고정)
+  $('#btn-test-ws').addEventListener('click', async () => {
+    const key = $('#apiKey').value.trim();
+    const el = $('#ws-test-result');
+
+    if (!key) { el.textContent = 'Ingresar API Key'; el.style.color = '#ff9800'; return; }
+
+    el.textContent = 'Verificando...';
+    el.style.color = '#e0e0e0';
+    $('#agent-info-box').style.display = 'none';
+
+    const result = await api.testConnection('', key);
+
+    if (result.success) {
+      showResult(el, 'API Key válida', true);
+      $('#btn-next-1').disabled = false;
+
+      // 매장/지점 정보 표시
+      if (result.storeName || result.branchName) {
+        $('#info-store').textContent = result.storeName || '-';
+        $('#info-branch').textContent = result.branchName || '-';
+        $('#agent-info-box').style.display = 'block';
+      }
+    } else {
+      showResult(el, result.error, false);
+    }
+  });
+
+  $('#btn-next-1').addEventListener('click', () => goStep(2));
+  $('#btn-back-2').addEventListener('click', () => goStep(1));
+  $('#btn-back-3').addEventListener('click', () => goStep(2));
+  $('#btn-next-2').addEventListener('click', () => goStep(3));
+
+  // Step 2: 프린터 탐색
+  $('#btn-discover').addEventListener('click', async () => {
+    $('#discover-status').textContent = '⏳ Buscando impresoras...';
+    const list = $('#printer-list');
+    list.textContent = '';
+
+    api.onDiscoverProgress((data) => {
+      $('#discover-status').textContent = 'Escaneando: ' + data.scanned + '/' + data.total + ' (' + data.found + ' encontradas)';
+    });
+
+    const ips = await api.discoverPrinters();
+    if (ips.length === 0) {
+      $('#discover-status').textContent = '⚠️ No se encontraron impresoras en puerto 9100';
+    } else {
+      $('#discover-status').textContent = '✅ ' + ips.length + ' impresora(s) encontrada(s)';
+      ips.forEach(ip => {
+        const li = document.createElement('li');
+        li.textContent = ip;
+        li.addEventListener('click', () => {
+          list.querySelectorAll('li').forEach(el => el.classList.remove('selected'));
+          li.classList.add('selected');
+          $('#printerHost').value = ip;
+        });
+        list.appendChild(li);
+      });
+    }
+  });
+
+  // Step 2: 프린터 테스트
+  $('#btn-test-printer').addEventListener('click', async () => {
+    const host = $('#printerHost').value.trim();
+    const port = parseInt($('#printerPort').value) || 9100;
+    const el = $('#printer-test-result');
+
+    if (!host) { el.textContent = '⚠️ Ingresar IP'; el.style.color = '#ff9800'; return; }
+
+    el.textContent = '⏳ Probando conexión...';
+    el.style.color = '#e0e0e0';
+    const ok = await api.testPrinterConnection(host, port);
+    showResult(el, ok ? '✅ Impresora accesible' : '❌ No se pudo conectar', ok);
+  });
+
+  // Step 3: 완료
+  $('#btn-finish').addEventListener('click', async () => {
+    await api.setAllConfig({
+      apiKey: $('#apiKey').value.trim(),
+      agentType: 'zebra',
+      printer: {
+        type: 'network',
+        host: $('#printerHost').value.trim(),
+        port: parseInt($('#printerPort').value) || 9100,
+        printerName: '',
+      },
+      labelPreset: '50x25-simple',
+    });
+    await api.completeSetup();
+  });
+
+  // 초기 로드
+  (async () => {
+    const key = await api.getConfig('apiKey');
+    const printer = await api.getConfig('printer');
+
+    if (key) $('#apiKey').value = key;
+    if (printer?.host) $('#printerHost').value = printer.host;
+    if (printer?.port) $('#printerPort').value = printer.port;
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zebra Agent — Main UI Mockup</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0d0d1a;
+      color: #e0e0e0;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+    .mockup-label {
+      text-align: center;
+      font-size: 11px;
+      color: #888;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .window {
+      width: 480px;
+      background: #1a1a2e;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      border: 1px solid #2a2a4a;
+    }
+    .titlebar {
+      background: #12122a;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid #2a2a4a;
+    }
+    .titlebar .dots { display: flex; gap: 6px; }
+    .titlebar .dot { width: 12px; height: 12px; border-radius: 50%; }
+    .titlebar .dot.red { background: #ff5f57; }
+    .titlebar .dot.yellow { background: #febc2e; }
+    .titlebar .dot.green { background: #28c840; }
+    .titlebar .title { flex: 1; text-align: center; font-size: 12px; color: #888; }
+    .content { padding: 20px; }
+
+    .header {
+      text-align: center;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #2a2a4a;
+      margin-bottom: 16px;
+    }
+    .header h1 { font-size: 18px; font-weight: 600; color: #f5a623; }
+    .header .subtitle { font-size: 12px; color: #888; margin-top: 4px; }
+
+    /* 상태 바 */
+    .status-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      background: #16213e;
+      border-radius: 8px;
+      margin-bottom: 12px;
+    }
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .status-dot.connected { background: #4caf50; }
+    .status-dot.disconnected { background: #f44336; }
+    .status-dot.reconnecting { background: #ff9800; }
+    .status-text { font-size: 13px; flex: 1; }
+
+    /* 카드 */
+    .card {
+      background: #16213e;
+      border-radius: 8px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+    .card-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #f5a623;
+      margin-bottom: 10px;
+    }
+
+    /* 정보 행 */
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 5px 0;
+      font-size: 13px;
+    }
+    .info-row .label { color: #888; }
+    .info-row .value { color: #e0e0e0; font-weight: 500; }
+
+    /* 폼 */
+    .form-group { margin-bottom: 10px; }
+    .form-group label { display: block; font-size: 12px; color: #aaa; margin-bottom: 4px; }
+    .form-group input {
+      width: 100%;
+      padding: 8px 10px;
+      background: #0f3460;
+      border: 1px solid #2a2a4a;
+      border-radius: 6px;
+      color: #e0e0e0;
+      font-size: 13px;
+      outline: none;
+    }
+
+    /* 버튼 */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 7px 14px;
+      border: none;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .btn-primary { background: #f5a623; color: #1a1a2e; }
+    .btn-secondary { background: #2a2a4a; color: #e0e0e0; }
+    .btn-row { display: flex; gap: 8px; margin-top: 10px; }
+
+    /* 로그 */
+    .log-area {
+      background: #0a0a1a;
+      border-radius: 8px;
+      padding: 10px;
+      max-height: 180px;
+      overflow-y: auto;
+      font-family: 'SF Mono', 'Consolas', monospace;
+      font-size: 11px;
+      line-height: 1.7;
+    }
+    .log-entry { padding: 1px 0; }
+    .log-entry .ts { color: #555; margin-right: 6px; }
+    .log-entry.ok .msg { color: #81c784; }
+    .log-entry.error .msg { color: #ef5350; }
+    .log-entry.info .msg { color: #90caf9; }
+
+    /* 트레이 목업 */
+    .tray-mockup {
+      width: 220px;
+      background: #2a2a3e;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+      border: 1px solid #3a3a5a;
+      font-size: 13px;
+    }
+    .tray-item {
+      padding: 8px 14px;
+      border-bottom: 1px solid #1a1a2e;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .tray-item:last-child { border-bottom: none; }
+    .tray-item.disabled { color: #888; }
+    .tray-item.hover { background: #3a3a5a; cursor: pointer; }
+    .tray-sep { height: 1px; background: #3a3a5a; }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- 메인 UI — 연결됨 상태 -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<div>
+  <div class="mockup-label">Main — Conectado</div>
+  <div class="window">
+    <div class="titlebar">
+      <div class="dots">
+        <div class="dot red"></div>
+        <div class="dot yellow"></div>
+        <div class="dot green"></div>
+      </div>
+      <div class="title">VentaGO Zebra Agent</div>
+    </div>
+    <div class="content">
+      <div class="header">
+        <h1>VentaGO Zebra Agent</h1>
+        <div class="subtitle">Impresión de etiquetas con código de barras</div>
+      </div>
+
+      <!-- 연결 상태 -->
+      <div class="status-bar">
+        <div class="status-dot connected"></div>
+        <span class="status-text">Conectado</span>
+        <button class="btn btn-secondary" style="padding:4px 10px; font-size:11px;">Reconectar</button>
+      </div>
+
+      <!-- 프린터 정보 -->
+      <div class="card">
+        <div class="card-title">Impresora</div>
+        <div class="info-row">
+          <span class="label">IP</span>
+          <span class="value">192.168.1.45</span>
+        </div>
+        <div class="info-row">
+          <span class="label">Puerto</span>
+          <span class="value">9100</span>
+        </div>
+        <div class="info-row">
+          <span class="label">Etiqueta</span>
+          <span class="value">400 x 236 dots</span>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-secondary">Imprimir test</button>
+          <button class="btn btn-secondary">Buscar impresoras</button>
+        </div>
+      </div>
+
+      <!-- 프린터 설정 -->
+      <div class="card">
+        <div class="card-title">Configuración de Impresora</div>
+        <div class="form-group">
+          <label>IP de la impresora</label>
+          <input type="text" value="192.168.1.45">
+        </div>
+        <div class="form-group">
+          <label>Puerto</label>
+          <input type="number" value="9100">
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-primary">Guardar</button>
+        </div>
+      </div>
+
+      <!-- 서버 연결 (접혀있는 상태) -->
+      <div class="card">
+        <div class="card-title">Conexión al Servidor</div>
+        <div class="info-row">
+          <span class="label">Servidor</span>
+          <span class="value" style="font-size:11px;">https://newapi.coolsistema.com/api</span>
+        </div>
+        <div class="info-row">
+          <span class="label">API Key</span>
+          <span class="value" style="font-size:11px;">vg_pr_8a3f2b1c...</span>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-secondary">Cambiar servidor</button>
+        </div>
+      </div>
+
+      <!-- 로그 -->
+      <div class="card">
+        <div class="card-title">Registro de actividad</div>
+        <div class="log-area">
+          <div class="log-entry info"><span class="ts">14:32:01</span><span class="msg">Conectando a wss://newapi.coolsistema.com/print-agent</span></div>
+          <div class="log-entry ok"><span class="ts">14:32:02</span><span class="msg">Conectado al servidor</span></div>
+          <div class="log-entry ok"><span class="ts">14:35:18</span><span class="msg">Imprimiendo 5 etiqueta(s)...</span></div>
+          <div class="log-entry ok"><span class="ts">14:35:19</span><span class="msg">5 etiqueta(s) impresas</span></div>
+          <div class="log-entry ok"><span class="ts">14:41:03</span><span class="msg">Imprimiendo 12 etiqueta(s)...</span></div>
+          <div class="log-entry ok"><span class="ts">14:41:04</span><span class="msg">12 etiqueta(s) impresas</span></div>
+          <div class="log-entry ok"><span class="ts">14:55:30</span><span class="msg">Test de impresión — OK</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- 메인 UI — 연결 끊김 상태 -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<div>
+  <div class="mockup-label">Main — Desconectado</div>
+  <div class="window">
+    <div class="titlebar">
+      <div class="dots">
+        <div class="dot red"></div>
+        <div class="dot yellow"></div>
+        <div class="dot green"></div>
+      </div>
+      <div class="title">VentaGO Zebra Agent</div>
+    </div>
+    <div class="content">
+      <div class="header">
+        <h1>VentaGO Zebra Agent</h1>
+        <div class="subtitle">Impresión de etiquetas con código de barras</div>
+      </div>
+
+      <div class="status-bar">
+        <div class="status-dot reconnecting"></div>
+        <span class="status-text">Reconectando...</span>
+        <button class="btn btn-secondary" style="padding:4px 10px; font-size:11px;">Reconectar</button>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Impresora</div>
+        <div class="info-row">
+          <span class="label">IP</span>
+          <span class="value">192.168.1.45</span>
+        </div>
+        <div class="info-row">
+          <span class="label">Puerto</span>
+          <span class="value">9100</span>
+        </div>
+        <div class="info-row">
+          <span class="label">Etiqueta</span>
+          <span class="value">400 x 236 dots</span>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-secondary">Imprimir test</button>
+          <button class="btn btn-secondary">Buscar impresoras</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Configuración de Impresora</div>
+        <div class="form-group">
+          <label>IP de la impresora</label>
+          <input type="text" value="192.168.1.45">
+        </div>
+        <div class="form-group">
+          <label>Puerto</label>
+          <input type="number" value="9100">
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-primary">Guardar</button>
+        </div>
+      </div>
+
+      <!-- 서버 연결 변경 (폼 펼쳐진 상태) -->
+      <div class="card">
+        <div class="card-title">Conexión al Servidor</div>
+        <div class="info-row">
+          <span class="label">Servidor</span>
+          <span class="value" style="font-size:11px;">https://newapi.coolsistema.com/api</span>
+        </div>
+        <div class="info-row">
+          <span class="label">API Key</span>
+          <span class="value" style="font-size:11px;">vg_pr_8a3f2b1c...</span>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-secondary">Cancelar</button>
+        </div>
+        <div style="margin-top:12px; padding-top:12px; border-top:1px solid #2a2a4a;">
+          <div class="form-group">
+            <label>URL del servidor</label>
+            <input type="text" value="http://localhost:5002/api">
+          </div>
+          <div class="form-group">
+            <label>API Key</label>
+            <input type="text" value="vg_pr_new_key_1234567890ab">
+          </div>
+          <div style="font-size:12px; color:#4caf50; margin-bottom:8px;">Conexión exitosa</div>
+          <div class="btn-row">
+            <button class="btn btn-secondary">Probar</button>
+            <button class="btn btn-primary">Guardar y reconectar</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Registro de actividad</div>
+        <div class="log-area">
+          <div class="log-entry ok"><span class="ts">14:32:02</span><span class="msg">Conectado al servidor</span></div>
+          <div class="log-entry ok"><span class="ts">14:35:19</span><span class="msg">5 etiqueta(s) impresas</span></div>
+          <div class="log-entry error"><span class="ts">14:40:11</span><span class="msg">Desconectado: transport close</span></div>
+          <div class="log-entry error"><span class="ts">14:40:13</span><span class="msg">Error de conexión: xhr poll error</span></div>
+          <div class="log-entry info"><span class="ts">14:40:15</span><span class="msg">Conectando a wss://newapi.coolsistema.com/print-agent</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- 시스템 트레이 메뉴 -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<div>
+  <div class="mockup-label">System Tray Menu</div>
+  <div style="display:flex; flex-direction:column; gap:20px;">
+
+    <!-- 연결됨 -->
+    <div>
+      <div style="font-size:10px; color:#666; margin-bottom:6px;">Connected state</div>
+      <div class="tray-mockup">
+        <div class="tray-item disabled">&#x1F7E2; Conectado</div>
+        <div class="tray-sep"></div>
+        <div class="tray-item hover">Abrir configuración</div>
+        <div class="tray-item hover">Imprimir test</div>
+        <div class="tray-sep"></div>
+        <div class="tray-item hover">Salir</div>
+      </div>
+    </div>
+
+    <!-- 연결 끊김 -->
+    <div>
+      <div style="font-size:10px; color:#666; margin-bottom:6px;">Disconnected state</div>
+      <div class="tray-mockup">
+        <div class="tray-item disabled">&#x1F534; Desconectado</div>
+        <div class="tray-sep"></div>
+        <div class="tray-item hover">Abrir configuración</div>
+        <div class="tray-item hover">Imprimir test</div>
+        <div class="tray-sep"></div>
+        <div class="tray-item hover">Salir</div>
+      </div>
+    </div>
+
+    <!-- 재연결 중 -->
+    <div>
+      <div style="font-size:10px; color:#666; margin-bottom:6px;">Reconnecting state</div>
+      <div class="tray-mockup">
+        <div class="tray-item disabled">&#x1F7E1; Reconectando...</div>
+        <div class="tray-sep"></div>
+        <div class="tray-item hover">Abrir configuración</div>
+        <div class="tray-item hover">Imprimir test</div>
+        <div class="tray-sep"></div>
+        <div class="tray-item hover">Salir</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
